@@ -6,6 +6,6 @@ ENV MYSQL_USER=${MYSQL_USER}
 ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
 ENV MYSQL_DATABASE=${MYSQL_DATABASE}
 
-COPY conf/my.cnf /etc/mysql/my.cnf
+COPY tools/conf /etc/mysql/conf
 
 EXPOSE 3306
