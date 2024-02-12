@@ -1,38 +1,52 @@
-version: '3'
+version: '3.8'
 
 services:
   nginx:
-    build:
-      context: ./requirements/nginx
+    container_name: nginx_container
+    build: ./requirements/nginx
     ports:
       - "443:443"
-    restart: always
+    volumes:
+      - ./requirements/nginx/html:/var/www/html
+      - ./requirements/nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - my_network
+    restart: on-failure
   
   wordpress:
-    build:
-      context: ./requirements/wordpress
+    container_name: wordpress_container
+    build: ./requirements/wordpress
+    depends_on:
+      - mariadb
     volumes:
       - wordpress_data:/var/www/html
       - wordpress_db:/var/lib/mysql
+    networks:
+      - my_network
     environment:
       WORDPRESS_DB_HOST: mariadb
       WORDPRESS_DB_USER: ${MYSQL_USER}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
-    depends_on:
-      - mariadb
-    restart: always
+    restart: on-failure
   
   mariadb:
-    build:
-      context: ./requirements/mariadb
+    container_name: mariadb_container
+    build: ./requirements/mariadb
     environment:
+      MY_SQL_DATABASE: wordpress
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - wordpress_db: /var/lib/mysql
-    restart: always
+      - mariadb_db: /var/lib/mysql
+    networks:
+      - my_network
+    restart: on-failure
 
 volumes:
   wordpress_data:
-  wordpress_db:
+  mariadb_db:
+
+networks:
+  my_network:
+    driver: bridge
