@@ -1,8 +1,24 @@
-FROM nginx:latest
+FROM debian:12.0
 
-COPY tools/conf /etc/nginx/conf
+RUN apt-get update \
+	&& apt-get install -y \
+	nginx \
+	openssl \
+	&& rm -rf /var/lib/apt/lists/*
 
-COPY certs/server.crt /etc/nginx/server.crt
-COPY certs/server.key /etc/nginx/server.key
+RUN mkdir -p /etc/nginx/ssl
+
+COPY ./certs/nginx-selfsigned.crt /etc/nginx/ssl/
+COPY ./certs/nginx-selfsigned.key /etc/nginx/ssl/
+
+RUN rm /etc/nginx/sites-enabled/default
+
+COPY ./tools/my.conf /etc/nginx/sites-available/
+
+RUN ln -s /etc/nginx/sites-available/my.conf /etc/nginx/sites-enabled/
+
+VOLUME [ "/var/lib/nginx" ]
 
 EXPOSE 443
+
+CMD [ "nginx", "-g", "daemon off;" ]
