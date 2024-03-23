@@ -1,51 +1,51 @@
 version: '3.8'
 
 services:
-  nginx:
-    container_name: nginx_container
-    build: ./requirements/nginx
-    ports:
-      - "443:443"
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
     volumes:
-      - ./requirements/nginx/html:/var/www/html
-      - ./requirements/nginx/certs:/etc/nginx/certs:ro
+      - db_data: /var/lib/mysql
     networks:
       - my_network
     restart: on-failure
-  
-  wordpress:
-    container_name: wordpress_container
-    build: ./requirements/wordpress
-    depends_on:
-      - mariadb
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
     volumes:
+      - ./requirements/nginx/conf:/etc/nginx/conf.d
+      - ./requirements/nginx/certs:/etc/nginx/certs
       - wordpress_data:/var/www/html
-      - wordpress_db:/var/lib/mysql
     networks:
       - my_network
+    restart: on-failure
+    ports:
+      - "443:443"
+  
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - my_network
+    restart: on-failure
     environment:
       WORDPRESS_DB_HOST: mariadb
       WORDPRESS_DB_USER: ${MYSQL_USER}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
-    restart: on-failure
+    depends_on:
+      - mariadb
   
-  mariadb:
-    container_name: mariadb_container
-    build: ./requirements/mariadb
-    environment:
-      MY_SQL_DATABASE: wordpress
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - mariadb_db: /var/lib/mysql
-    networks:
-      - my_network
-    restart: on-failure
-
 volumes:
   wordpress_data:
-  mariadb_db:
+  db_data:
 
 networks:
   my_network:

@@ -11,9 +11,9 @@ COPY ./certs/nginx-selfsigned.key /etc/nginx/ssl/
 
 RUN rm /etc/nginx/sites-enabled/default
 
-COPY ./tools/my.conf /etc/nginx/sites-available/
+COPY ./tools/conf /etc/nginx/sites-available/
 
-RUN ln -s /etc/nginx/sites-available/my.conf /etc/nginx/sites-enabled/
+RUN ln -s /etc/nginx/sites-available/conf /etc/nginx/sites-enabled/
 
 VOLUME [ "/var/lib/nginx" ]
 
