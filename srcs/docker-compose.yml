@@ -1,51 +1,59 @@
-version: '3.8'
+version: '3'
 
 services:
   mariadb:
+    image: mariadb
     container_name: mariadb
     build: ./requirements/mariadb
     volumes:
       - db_data: /var/lib/mysql
     networks:
       - my_network
-    restart: on-failure
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    restart: always
+    env_file:
+      - .env
 
   nginx:
+    image: nginx
     container_name: nginx
     build: ./requirements/nginx
     volumes:
-      - ./requirements/nginx/conf:/etc/nginx/conf.d
-      - ./requirements/nginx/certs:/etc/nginx/certs
       - wordpress_data:/var/www/html
+    depends_on:
+      - wordpress
     networks:
       - my_network
-    restart: on-failure
+    restart: always
     ports:
       - "443:443"
   
   wordpress:
+    image: wordpress
     container_name: wordpress
     build: ./requirements/wordpress
     volumes:
       - wordpress_data:/var/www/html
-    networks:
-      - my_network
-    restart: on-failure
-    environment:
-      WORDPRESS_DB_HOST: mariadb
-      WORDPRESS_DB_USER: ${MYSQL_USER}
-      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
     depends_on:
       - mariadb
+    networks:
+      - my_network
+    restart: always
+    env_file:
+      - .env
   
 volumes:
   wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/snemoto/data/wordpress
   db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/snemoto/data/db
 
 networks:
   my_network:

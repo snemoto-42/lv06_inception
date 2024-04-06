@@ -17,17 +17,17 @@ help :
 
 # サービスのイメージをビルド、Docker imageの作成
 build :
-	docker-compose build
+	docker-compose -f srcs/docker-compose.yml build
 
 # サービスをバックグラウンドで起動、Docker containerが起動
 # -d はデタッチモード、コマンド実行後にターミナルを即座に戻す
 up :
-	docker-compose up -d
+	docker-compose -f srcs/docker-compose.yml up -d --build
 
 # Dockerコンテナを停止、削除
 # 起動されたコンテナを停止、停止したコンテナとネットワークを削除。ボリュームは保持される
 down :
-	docker-compose down
+	docker-compose -f srcs/docker-compose.yml down
 
 # 使用されていないDockerボリュームとネットワークを削除
 clean :
