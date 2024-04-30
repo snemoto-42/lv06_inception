@@ -1,2 +1,3 @@
-# srcs/.env
+# *.env
 # .gitignore
+*.log
