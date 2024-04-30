@@ -3,7 +3,7 @@
 # ----define----
 wait_for_mysql()
 {
-	until mysqladmin ping -h"$WORDPRESS_DB_HOST" --silent; do
+	until mysqladmin ping -h"${WORDPRESS_DB_HOST}" --silent; do
 		echo "Waiting for MariaDB to start ..."
 		sleep 1
 	done
@@ -26,7 +26,10 @@ else
 	wait_for_mysql
 
 	mysql -uroot -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
-	mysql -uroot -e "GRANT ALL ON ${MYSQL_DATABASE}. * TO '${MYSQL_USER}' IDENTIFIED BY '${MYSQL_PASSWORD}';"
+	mysql -uroot -e "GRANT ALL \
+		ON ${MYSQL_DATABASE}. * \
+		TO '${MYSQL_USER}' \
+		IDENTIFIED BY '${MYSQL_PASSWORD}';"
 	mysql -uroot -e "FLUSH PRIVILEGES;"
 
 	if ! kill -s TERM "$pid" || ! wait "$pid"; then

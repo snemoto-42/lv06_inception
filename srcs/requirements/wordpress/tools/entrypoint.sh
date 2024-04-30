@@ -3,7 +3,7 @@
 # ----define----
 wait_for_mysql()
 {
-	until mysqladmin ping -h"$WORDPRESS_DB_HOST" --silent; do
+	until mysqladmin ping -h"${WORDPRESS_DB_HOST}" --silent; do
 		echo "Waiting for MariaDB to start ..."
 		sleep 1
 	done
@@ -26,13 +26,14 @@ fi
 if ! $(wp --allow-root core is-innstalled); then
 	wp --allow-root core install \
 		--url="${WORDPRESS_URL}" \
-		--title="Your WordPress Site" \
+		--title="${WORDPRESS_TITLE}" \
 		--admin_user="${WORDPRESS_ADMIN_USER}" \
 		--admin_password="${WORDPRESS_ADMIN_PASSWORD}" \
 		--admin_email="${WORDPRESS_ADMIN_EMAIL}"
 	wp --allow-root user create \
-		"${WORDPRESS_SUBSCRIBER_USER}" user@example.com \
+		--user="${WORDPRESS_SUBSCRIBER_USER}" \
 		--user_pass="${WORDPRESS_SUBSCRIBER_PASSWORD}" \
+		--user_email="${WORDPRESS_SUBSCRIBER_EMAIL}" \
 		--role=subscriber
 	wp --allow-root option update comment_registration 1
 fi

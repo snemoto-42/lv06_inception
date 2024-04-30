@@ -8,13 +8,16 @@ COPY ./tools/conf /etc/nginx/conf
 
 RUN mkdir -p /etc/nginx/ssl
 
-RUN openssl req -x509 -nodes \
+RUN openssl req \
+	-x509 \
+	-nodes \
 	-days 365 \
 	-newkey rsa:2048 \
+	-subj "/CN=snemoto.42.fr" \
 	-keyout /etc/nginx/ssl/nginx.key \
-	-out /etc/nginx/ssl/nginx.crt \
-	-subj "/CN=snemoto.42.fr"
+	-out /etc/nginx/ssl/nginx.crt
 
+# 不要？
 RUN mkdir -p /run/nginx
 WORKDIR /var/www/html
 
