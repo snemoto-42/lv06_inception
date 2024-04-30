@@ -33,4 +33,5 @@ else
 	echo "MariaDB setup completed."
 fi
 
+echo "Starting MariaDB server..."
 exec "$@"

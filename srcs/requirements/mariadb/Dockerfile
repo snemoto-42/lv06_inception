@@ -4,7 +4,7 @@ RUN apt-get update \
 	&& apt-get install -y mariadb-server \
 	&& rm -rf /var/lib/apt/lists/*
 
-COPY ./tools/my.cnf /etc/mysql/my.cnf
+COPY ./tools/my.conf /etc/mysql/my.conf
 
 COPY ./tools/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
