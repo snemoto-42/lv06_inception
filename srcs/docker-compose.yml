@@ -32,7 +32,7 @@ services:
     container_name: wordpress
     build: ./requirements/wordpress
     volumes:
-      - wordpress_data:/var/www/html
+      - wordpress_data: /var/www/html
     depends_on:
       - mariadb
     networks:
