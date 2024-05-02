@@ -21,23 +21,23 @@ help :
 ps :
 	docker ps
 
-# サービスのイメージをビルド、Docker imageの作成
+# サービスのイメージをビルド
 build :
 	docker-compose -f srcs/docker-compose.yml build
 
-# サービスを起動、Docker containerが起動
-# -d を付けるとデタッチモード、コマンド実行後にターミナルを即座に戻す
+# イメージからコンテナを起動
+# -d：デタッチモード、コマンド実行後にターミナルを即座に戻す
 up :
 	docker-compose -f srcs/docker-compose.yml up --build
 
-# Dockerコンテナを停止、削除
-# 起動されたコンテナを停止、停止したコンテナとネットワークを削除。ボリュームは保持される
+# コンテナを停止、削除
+# 起動コンテナを停止、コンテナとネットワークを削除、ボリュームは保持
 down :
 	docker-compose -f srcs/docker-compose.yml down
 
-# 使用されていないDockerボリュームとネットワークを削除
+# 使用されていないボリュームとネットワークを削除
 clean :
 	docker volume prune -f
 	docker network prune -f
 
-.PHONY: help build up down clean
+.PHONY: help build up down clean ps
