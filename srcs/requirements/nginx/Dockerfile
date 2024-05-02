@@ -6,9 +6,9 @@ RUN apt-get update && \
 		openssl && \
 	rm -rf /var/lib/apt/lists/*
 
-COPY ./tools/conf /etc/nginx/conf
+COPY ./conf/my.conf /etc/nginx/conf
 
-RUN mkdir -p ${SSL_PATH}
+RUN mkdir -p /etc/nginx/ssl
 RUN openssl req \
 	-x509 \
 	-nodes \

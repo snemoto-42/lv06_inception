@@ -16,12 +16,16 @@ help :
 	@echo " up	: Start Docker containers"
 	@echo " down	: Stop and remove Docker containers"
 	@echo " clean	: Clean up Docker volume and networks"
+	@echo " ps	: Check docker processes"
+
+ps :
+	docker ps
 
 # サービスのイメージをビルド、Docker imageの作成
 build :
 	docker-compose -f srcs/docker-compose.yml build
 
-# サービスをバックグラウンドで起動、Docker containerが起動
+# サービスを起動、Docker containerが起動
 # -d を付けるとデタッチモード、コマンド実行後にターミナルを即座に戻す
 up :
 	docker-compose -f srcs/docker-compose.yml up --build

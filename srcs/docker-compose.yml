@@ -6,7 +6,7 @@ services:
     container_name: mariadb
     build: ./requirements/mariadb
     volumes:
-      - db_data: /var/lib/mysql
+      - db_data:/var/lib/mysql
     networks:
       - my_network
     restart: always
@@ -26,13 +26,15 @@ services:
     restart: always
     ports:
       - "443:443"
+    env_file:
+      - .env
   
   wordpress:
     image: wordpress
     container_name: wordpress
     build: ./requirements/wordpress
     volumes:
-      - wordpress_data: /var/www/html
+      - wordpress_data:/var/www/html
     depends_on:
       - mariadb
     networks:
