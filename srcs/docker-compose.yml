@@ -47,13 +47,13 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/snemoto/data/wordpress
+      device: ${VOLUME_PATH}/wordpress
   db_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/snemoto/data/db
+      device: ${VOLUME_PATH}/db
 
 networks:
   my_network:

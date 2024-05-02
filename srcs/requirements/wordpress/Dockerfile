@@ -1,11 +1,11 @@
 FROM debian:12.0
 
-RUN apt-get update \
-	&& apt-get install -y \
+RUN apt-get update && \
+	apt-get install -y \
 		curl \
 		php-fpm \
-		php-mysql \
-	&& rm -rf /var/lib/apt/lists/*
+		php-mysql && \
+	rm -rf /var/lib/apt/lists/*
 
 RUN curl -0 https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
 	&& chmod +x wp-cli.phar \

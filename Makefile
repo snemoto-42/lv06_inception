@@ -5,6 +5,8 @@
 ENV_FILE := ./srcs/.env
 
 # .envの読み込み、シェル環境にエクスポート
+# docker-compose.yamlで環境変数を使用
+# 各コンテナの環境変数はdocker-composeで読み込み
 include $(ENV_FILE)
 export
 
