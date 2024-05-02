@@ -1,29 +1,13 @@
 #!/bin/bash
 
-# ----define----
-wait_for_mysql()
-{
-	until mysqladmin ping -h"${WORDPRESS_DB_HOST}" --silent; do
-		echo "Waiting for MariaDB to start ..."
-		sleep 1
-	done
-	echo "MariaDB is starting..."
-}
-
-# ----execute_----
 set -e
 
-if [ -d "/var/lib/mysql/mysql" ]; then
-	echo "MariaDB is already set up"
-else
+if [ ! -d "/var/lib/mysql/mysql" ]; then
 	echo "Setting up MariaDB for the first time."
 
-	mysql_install_db --user=mysql --datadir="/var/lib/mysql"
-
+	mysql_install_db
 	mysqld_safe &
 	pid="$!"
-
-	wait_for_mysql
 
 	mysql -uroot -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
 	mysql -uroot -e "GRANT ALL \

@@ -8,7 +8,9 @@ RUN apt-get update && \
 
 COPY ./conf/my.conf /etc/nginx/conf
 
+# 環境変数を渡せない
 RUN mkdir -p /etc/nginx/ssl
+
 RUN openssl req \
 	-x509 \
 	-nodes \

@@ -25,7 +25,7 @@ ps :
 build :
 	docker-compose -f srcs/docker-compose.yml build
 
-# イメージからコンテナを起動
+# イメージを作成、イメージからコンテナを起動
 # -d：デタッチモード、コマンド実行後にターミナルを即座に戻す
 up :
 	docker-compose -f srcs/docker-compose.yml up --build
