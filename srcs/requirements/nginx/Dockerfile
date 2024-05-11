@@ -1,5 +1,8 @@
 FROM debian:12.0
 
+# ビルド時の環境変数を定義
+ARG SSL_PATH
+
 RUN apt-get update && \
 	apt-get install -y \
 		nginx \
@@ -8,8 +11,7 @@ RUN apt-get update && \
 
 COPY ./conf/my.conf /etc/nginx/conf
 
-# 環境変数を渡せない
-RUN mkdir -p /etc/nginx/ssl
+RUN mkdir -p ${SSL_PATH}
 
 RUN openssl req \
 	-x509 \

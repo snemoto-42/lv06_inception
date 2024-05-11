@@ -4,9 +4,12 @@ services:
   mariadb:
     image: mariadb
     container_name: mariadb
-    build: ./requirements/mariadb
+    build: 
+      context: ./requirements/mariadb
+      args:
+        WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
     volumes:
-      - db_data:/var/lib/mysql
+      - mariadb:/var/lib/mysql
     networks:
       - my_network
     restart: always
@@ -16,25 +19,27 @@ services:
   nginx:
     image: nginx
     container_name: nginx
-    build: ./requirements/nginx
+    build: 
+      context: ./requirements/nginx
+      args:
+        SSL_PATH: ${SSL_PATH}
     volumes:
-      - wordpress_data:/var/www/html
+      - wordpress:/var/www/html
     depends_on:
       - wordpress
     networks:
       - my_network
     restart: always
-    ports:
-      - "443:443"
     env_file:
       - .env
   
   wordpress:
     image: wordpress
     container_name: wordpress
-    build: ./requirements/wordpress
+    build: 
+      context: ./requirements/wordpress
     volumes:
-      - wordpress_data:/var/www/html
+      - wordpress:/var/www/html
     depends_on:
       - mariadb
     networks:
@@ -44,13 +49,13 @@ services:
       - .env
   
 volumes:
-  wordpress_data:
+  wordpress:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: ${VOLUME_PATH}/wordpress
-  db_data:
+  mariadb:
     driver: local
     driver_opts:
       type: none

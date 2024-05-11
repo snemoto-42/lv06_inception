@@ -18,26 +18,29 @@ help :
 	@echo " clean	: Clean up Docker volume and networks"
 	@echo " ps	: Check docker processes"
 
-ps :
-	docker ps
-
 # サービスのイメージをビルド
 build :
+	mkdir -p ${VOLUME_PATH}/db
+	mkdir -p ${VOLUME_PATH}/wordpress
 	docker-compose -f srcs/docker-compose.yml build
 
 # イメージを作成、イメージからコンテナを起動
 # -d：デタッチモード、コマンド実行後にターミナルを即座に戻す
-up :
-	docker-compose -f srcs/docker-compose.yml up --build
+up : build
+	docker-compose -f srcs/docker-compose.yml up
 
-# コンテナを停止、削除
 # 起動コンテナを停止、コンテナとネットワークを削除、ボリュームは保持
 down :
 	docker-compose -f srcs/docker-compose.yml down
 
 # 使用されていないボリュームとネットワークを削除
-clean :
+clean : down
 	docker volume prune -f
 	docker network prune -f
+	rm -rf ${VOLUME_PATH}/db
+	rm -rf ${VOLUME_PATH}/wordpress
+
+ps :
+	docker ps
 
 .PHONY: help build up down clean ps

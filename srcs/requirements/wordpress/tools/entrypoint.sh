@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 # `until mysqladmin ping -uroot --silent; do
@@ -9,10 +8,29 @@ set -e
 
 # echo "MariaDB is starting..."
 
-# ls -al /var/www/html
+# for debug
+echo "checking files at /etc/php/*/fpm/pool.d/"
+ls -la /etc/php/*/fpm/pool.d/
+
+sed -i "s/listen = .*/listen = 0.0.0.0:9000/" /etc/php/*/fpm/pool.d/www.conf
+sed -i "s/^listen.allowed_clients/;listen.allowed_clients/" /etc/php/*/fpm/pool.d/www.conf
+
+cd /var/www/html
+
+# # for debug
+echo "checking files at var/www/html"
+pwd
+ls -al
+
+if [ ! -f index.php ]; then
+	chown -R www-data:www-data /var/www/html
+	chmod -R 755 /var/www/html
+	wp --allow-root --path=/var/www/html core download
+fi
 
 if [ ! -f wp-config.php ]; then
-	wp --allow-root --path=/var/www/html core config \
+	echo "wp-config.php does not exist."
+	wp --allow-root --path='/var/www/html' core config \
 		--dbhost="${WORDPRESS_DB_HOST}" \
 		--dbname="${WORDPRESS_DB_NAME}" \
 		--dbuser="${WORDPRESS_DB_USER}" \
@@ -20,16 +38,16 @@ if [ ! -f wp-config.php ]; then
 fi
 
 if ! $(wp --allow-root core is-innstalled); then
-	wp --allow-root --path=/var/www/html core install \
+	wp --allow-root --path='/var/www/html' core install \
 		--url="${WORDPRESS_URL}" \
 		--title="${WORDPRESS_TITLE}" \
 		--admin_user="${WORDPRESS_ADMIN_USER}" \
 		--admin_password="${WORDPRESS_ADMIN_PASSWORD}" \
 		--admin_email="${WORDPRESS_ADMIN_EMAIL}"
-	wp --allow-root --path=/var/www/html user create \
+	wp --allow-root --path='/var/www/html' user create \
 		--user="${WORDPRESS_SUBSCRIBER_USER}" \
 		--user_pass="${WORDPRESS_SUBSCRIBER_PASSWORD}" \
 		--user_email="${WORDPRESS_SUBSCRIBER_EMAIL}" \
 		--role=subscriber
-	wp --allow-root --path=/var/www/html option update comment_registration 1
+	wp --allow-root --path='/var/www/html' option update comment_registration 1
 fi
