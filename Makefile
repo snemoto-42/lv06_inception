@@ -20,7 +20,7 @@ help :
 
 # サービスのイメージをビルド
 build :
-	mkdir -p ${VOLUME_PATH}/db
+	mkdir -p ${VOLUME_PATH}/mariadb
 	mkdir -p ${VOLUME_PATH}/wordpress
 	docker-compose -f srcs/docker-compose.yml build
 
@@ -37,7 +37,7 @@ down :
 clean : down
 	docker volume prune -f
 	docker network prune -f
-	rm -rf ${VOLUME_PATH}/db
+	rm -rf ${VOLUME_PATH}/mariadb
 	rm -rf ${VOLUME_PATH}/wordpress
 
 ps :

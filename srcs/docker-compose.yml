@@ -60,7 +60,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${VOLUME_PATH}/db
+      device: ${VOLUME_PATH}/mariadb
 
 networks:
   my_network:
