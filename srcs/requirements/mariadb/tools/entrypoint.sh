@@ -3,7 +3,7 @@ set -e
 
 # for debug
 # echo "checking files at /var/lib/mysql/mysql"
-# ls -la /var/lib/mysql/mysql
+# ls -la /var/run/mysqld
 
 if [ ! -d "/var/lib/mysql/mysql" ]; then
 	echo "Setting up MariaDB for the first time."
@@ -29,3 +29,6 @@ fi
 
 echo "Starting MariaDB server..."
 exec "$@"
+
+# ${WORDPRESS_DB_USER}
+exec mysqld -u mysql --console

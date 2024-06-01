@@ -35,6 +35,7 @@ if [ ! -f wp-config.php ]; then
 		--dbuser="${WORDPRESS_DB_USER}" \
 		--dbpass="${WORDPRESS_DB_PASSWORD}" \
 		--dbhost="${WORDPRESS_DB_HOST}"
+	echo "wp-config.php created."
 fi
 
 if ! $(wp --allow-root core is-innstalled); then

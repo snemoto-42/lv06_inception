@@ -13,12 +13,14 @@ COPY ./conf/my.cnf /etc/mysql/my.cnf
 COPY ./tools/entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-RUN groupadd -r ${WORDPRESS_DB_USER}
-RUN	useradd -r -g ${WORDPRESS_DB_USER} ${WORDPRESS_DB_USER}
-USER ${WORDPRESS_DB_USER}
+RUN mkdir -p /run/mysqld
+RUN chown mysql:mysql /run/mysqld
+RUN chmod 755 /run/mysqld
 
-ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
+# RUN groupadd -r ${WORDPRESS_DB_USER}
+# RUN	useradd -r -g ${WORDPRESS_DB_USER} ${WORDPRESS_DB_USER}
+# USER ${WORDPRESS_DB_USER}
 
 EXPOSE 3306
 
-CMD [ "mysqld_safe" ]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
