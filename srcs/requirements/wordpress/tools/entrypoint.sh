@@ -38,7 +38,7 @@ if [ ! -f wp-config.php ]; then
 	ls -al /var/www/html
 fi
 
-if ! $(wp --allow-root core is-innstalled); then
+if ! $(wp --allow-root core is-installed); then
 	wp --allow-root --path='/var/www/html' core install \
 		--url="${WORDPRESS_URL}" \
 		--title="${WORDPRESS_TITLE}" \
@@ -52,3 +52,8 @@ if ! $(wp --allow-root core is-innstalled); then
 		--role=subscriber
 	wp --allow-root --path='/var/www/html' option update comment_registration 1
 fi
+
+echo "finish setting up for Wordpress."
+# exec "$@"
+# exec php-fpm -v
+exec php-fpm --nodaemonize

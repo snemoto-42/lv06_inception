@@ -17,10 +17,8 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 # RUN wp --allow-root core download
 # COPY ./tools/wp-config.php /var/www/html
 
+EXPOSE 9000
+
 COPY ./tools/entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
-
-EXPOSE 9000
-
-CMD [ "php7.4-fpm", "-F" ]

@@ -9,16 +9,21 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 	mysql_note "Setting up MariaDB."
 	mysql_install_db
 	# pid="$!"
+fi
 
-	# if ! kill -s TERM "$pid" || ! wait "$pid"; then
-	# 	echo >$2 'MariaDB init process failed.'
-	# 	exit 1
-	# fi
+# バックグラウンドでサーバーを起動
+mysqld --skip-networking --socket="/run/mysqld/mysqld.sock" &
+pid="$!"
+
+until mysqladmin ping --silent; do
+	echo "Waiting for MariaDB to start ..."
+	sleep 5
+done
 
 	# -e コマンドラインから直接クエリを実行して、結果を表示する
-	mysql -uroot -e "CREATE DATABASE '${MYSQL_DATABASE}';"
+	mysql -uroot -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
 
-	mysql -uroot -e "CREATE USER ${MYSQL_USER} \
+	mysql -uroot -e "CREATE USER IF NOT EXISTS ${MYSQL_USER} \
 		IDENTIFIED BY '${MYSQL_PASSWORD}';"
 
 	mysql -uroot -e "GRANT ALL PRIVILEGES \
@@ -28,18 +33,15 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 
 	mysql -uroot -e "FLUSH PRIVILEGES;"
 
-	mysql_note "MariaDB setup completed."
+	echo "MariaDB setup completed."
 
+if ! kill -s TERM "$pid" || ! wait "$pid"; then
+	echo >$2 'MariaDB init process failed.'
+	exit 1
 fi
-
-# mysqld --skip-networking --socket="/run/mysqld/mysqld.sock"
-
-# until mysqladmin ping --silent; do
-# 	mysql_note "Waiting for MariaDB to start ..."
-# 	sleep 5
-# done
 
 echo "Starting MariaDB server..."
 # exec "$@"
 
-mysqld --console
+# exec mysqld --console
+exec mysqld
