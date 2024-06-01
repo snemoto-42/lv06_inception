@@ -20,20 +20,20 @@ until mysqladmin ping --silent; do
 	sleep 5
 done
 
-	# -e コマンドラインから直接クエリを実行して、結果を表示する
-	mysql -uroot -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
+# -e コマンドラインから直接クエリを実行して、結果を表示する
+mysql -uroot -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
 
-	mysql -uroot -e "CREATE USER IF NOT EXISTS ${MYSQL_USER} \
-		IDENTIFIED BY '${MYSQL_PASSWORD}';"
+mysql -uroot -e "CREATE USER IF NOT EXISTS ${MYSQL_USER} \
+	IDENTIFIED BY '${MYSQL_PASSWORD}';"
 
-	mysql -uroot -e "GRANT ALL PRIVILEGES \
-		ON ${MYSQL_DATABASE}.* \
-		TO '${MYSQL_USER}'@'%' \
-		IDENTIFIED BY '${MYSQL_PASSWORD}';"
+mysql -uroot -e "GRANT ALL PRIVILEGES \
+	ON ${MYSQL_DATABASE}.* \
+	TO '${MYSQL_USER}'@'%' \
+	IDENTIFIED BY '${MYSQL_PASSWORD}';"
 
-	mysql -uroot -e "FLUSH PRIVILEGES;"
+mysql -uroot -e "FLUSH PRIVILEGES;"
 
-	echo "MariaDB setup completed."
+echo "MariaDB setup completed."
 
 if ! kill -s TERM "$pid" || ! wait "$pid"; then
 	echo >$2 'MariaDB init process failed.'
@@ -41,7 +41,7 @@ if ! kill -s TERM "$pid" || ! wait "$pid"; then
 fi
 
 echo "Starting MariaDB server..."
-# exec "$@"
 
+# exec "$@"
 # exec mysqld --console
 exec mysqld

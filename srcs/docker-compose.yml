@@ -6,8 +6,8 @@ services:
     container_name: mariadb
     build: 
       context: ./requirements/mariadb
-      args:
-        MYSQL_USER: ${MYSQL_USER}
+      # args:
+      #   MYSQL_USER: ${MYSQL_USER}
     volumes:
       - mariadb:/var/lib/mysql
     networks:

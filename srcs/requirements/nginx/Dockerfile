@@ -22,7 +22,6 @@ RUN openssl req \
 	-keyout ${SSL_PATH}/nginx.key \
 	-out ${SSL_PATH}/nginx.crt
 
-# 不要？
 # RUN mkdir -p /run/nginx
 # WORKDIR /var/www/html
 

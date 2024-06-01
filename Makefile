@@ -16,7 +16,6 @@ help :
 	@echo " up	: Start Docker containers"
 	@echo " down	: Stop and remove Docker containers"
 	@echo " clean	: Clean up Docker volume and networks"
-	@echo " ps	: Check docker processes"
 
 # サービスのイメージをビルド
 build :
@@ -43,7 +42,4 @@ fclean : clean
 	rm -rf ${VOLUME_PATH}/mariadb
 	rm -rf ${VOLUME_PATH}/wordpress
 
-ps :
-	docker ps
-
-.PHONY: help build up down clean fclean ps
+.PHONY: help build up down clean fclean
