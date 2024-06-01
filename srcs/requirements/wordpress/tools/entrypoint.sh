@@ -35,7 +35,7 @@ if [ ! -f wp-config.php ]; then
 		--dbpass="${MYSQL_PASSWORD}" \
 		--dbhost="${WORDPRESS_HOST}"
 	echo "wp-config.php created."
-	ls -al /var/www/html
+	# ls -al /var/www/html
 fi
 
 if ! $(wp --allow-root core is-installed); then
