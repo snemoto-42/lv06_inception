@@ -4,8 +4,8 @@ RUN apt-get update && \
 	apt-get install -y \
 		default-mysql-client \
 		curl \
-		php-fpm \
-		php-mysql && \
+		php8.2-fpm \
+		php8.2-mysql && \
 	rm -rf /var/lib/apt/lists/*
 
 # -O フラグ：パスと同じファイル名でローカルに保存

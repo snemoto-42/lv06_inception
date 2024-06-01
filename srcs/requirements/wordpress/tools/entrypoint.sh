@@ -34,8 +34,6 @@ if [ ! -f wp-config.php ]; then
 		--dbuser="${MYSQL_USER}" \
 		--dbpass="${MYSQL_PASSWORD}" \
 		--dbhost="${WORDPRESS_HOST}"
-	echo "wp-config.php created."
-	# ls -al /var/www/html
 fi
 
 if ! $(wp --allow-root core is-installed); then
@@ -45,15 +43,16 @@ if ! $(wp --allow-root core is-installed); then
 		--admin_user="${WORDPRESS_ADMIN_USER}" \
 		--admin_password="${WORDPRESS_ADMIN_PASSWORD}" \
 		--admin_email="${WORDPRESS_ADMIN_EMAIL}"
-	wp --allow-root --path='/var/www/html' user create \
-		--user="${WORDPRESS_SUBSCRIBER_USER}" \
-		--user_pass="${WORDPRESS_SUBSCRIBER_PASSWORD}" \
-		--user_email="${WORDPRESS_SUBSCRIBER_EMAIL}" \
-		--role=subscriber
+	# wp --allow-root --path='/var/www/html' user create \
+	# 	--user="${WORDPRESS_SUBSCRIBER_USER}" \
+	# 	--user_pass="${WORDPRESS_SUBSCRIBER_PASSWORD}" \
+	# 	--user_email="${WORDPRESS_SUBSCRIBER_EMAIL}" \
+	# 	--role=subscriber
 	wp --allow-root --path='/var/www/html' option update comment_registration 1
 fi
 
 echo "finish setting up for Wordpress."
+
 # exec "$@"
 # exec php-fpm -v
-exec php-fpm --nodaemonize
+exec php-fpm8.2 --nodaemonize
