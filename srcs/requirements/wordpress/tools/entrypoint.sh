@@ -1,41 +1,41 @@
 #!/bin/bash
 set -e
 
-until mysqladmin ping -hmariadb -uroot --silent; do
-	echo "Waiting for MariaDB to start ..."
-	sleep 5
-done
-
+# until mysqladmin ping -h"${WORDPRESS_HOST}" --silent; do
+# 	echo "Waiting for MariaDB to start ..."
+# 	sleep 5
+# done
 # echo "MariaDB is starting..."
 
 # for debug
 # echo "checking files at /etc/php/*/fpm/pool.d/"
 # ls -la /etc/php/*/fpm/pool.d/
 
-sed -i "s/listen = .*/listen = 0.0.0.0:9000/" /etc/php/*/fpm/pool.d/www.conf
-sed -i "s/^listen.allowed_clients/;listen.allowed_clients/" /etc/php/*/fpm/pool.d/www.conf
-
-cd /var/www/html
-
 # # for debug
 # echo "checking files at var/www/html"
 # pwd
 # ls -al
 
+sed -i "s/listen = .*/listen = 0.0.0.0:9000/" /etc/php/*/fpm/pool.d/www.conf
+sed -i "s/^listen.allowed_clients/;listen.allowed_clients/" /etc/php/*/fpm/pool.d/www.conf
+
+cd /var/www/html
+chown -R www-data:www-data /var/www/html
+chmod -R 755 /var/www/html
+
 if [ ! -f index.php ]; then
-	chown -R www-data:www-data /var/www/html
-	chmod -R 755 /var/www/html
 	wp --allow-root --path='/var/www/html' core download
 fi
 
 if [ ! -f wp-config.php ]; then
 	echo "wp-config.php does not exist."
 	wp --allow-root --path='/var/www/html' core config \
-		--dbname="${WORDPRESS_DB_NAME}" \
-		--dbuser="${WORDPRESS_DB_USER}" \
-		--dbpass="${WORDPRESS_DB_PASSWORD}" \
-		--dbhost="${WORDPRESS_DB_HOST}"
+		--dbname="${MYSQL_DATABASE}" \
+		--dbuser="${MYSQL_USER}" \
+		--dbpass="${MYSQL_PASSWORD}" \
+		--dbhost="${WORDPRESS_HOST}"
 	echo "wp-config.php created."
+	ls -al /var/www/html
 fi
 
 if ! $(wp --allow-root core is-innstalled); then

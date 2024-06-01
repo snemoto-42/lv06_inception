@@ -15,6 +15,7 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 
 # WORKDIR /var/www/html
 # RUN wp --allow-root core download
+# COPY ./tools/wp-config.php /var/www/html
 
 COPY ./tools/entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh

@@ -7,7 +7,7 @@ services:
     build: 
       context: ./requirements/mariadb
       args:
-        WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+        MYSQL_USER: ${MYSQL_USER}
     volumes:
       - mariadb:/var/lib/mysql
     networks:

@@ -25,7 +25,6 @@ build :
 	docker-compose -f srcs/docker-compose.yml build
 
 # イメージを作成、イメージからコンテナを起動
-# -d：デタッチモード、コマンド実行後にターミナルを即座に戻す
 up : build
 	docker-compose -f srcs/docker-compose.yml up
 
@@ -35,12 +34,16 @@ down :
 
 # 使用されていないボリュームとネットワークを削除
 clean : down
-	docker volume prune -f
-	docker network prune -f
+	docker volume prune --force
+	docker network prune --force
+
+# ローカルのマウント先を削除
+fclean : clean
+	docker image prune --force
 	rm -rf ${VOLUME_PATH}/mariadb
 	rm -rf ${VOLUME_PATH}/wordpress
 
 ps :
 	docker ps
 
-.PHONY: help build up down clean ps
+.PHONY: help build up down clean fclean ps

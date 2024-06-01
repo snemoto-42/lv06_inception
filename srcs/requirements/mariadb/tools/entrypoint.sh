@@ -6,29 +6,40 @@ set -e
 # ls -la /var/run/mysqld
 
 if [ ! -d "/var/lib/mysql/mysql" ]; then
-	echo "Setting up MariaDB for the first time."
+	mysql_note "Setting up MariaDB."
+	mysql_install_db
+	# pid="$!"
 
-	mariadb_install_db
-	pid="$!"
+	# if ! kill -s TERM "$pid" || ! wait "$pid"; then
+	# 	echo >$2 'MariaDB init process failed.'
+	# 	exit 1
+	# fi
 
-	mysql -uroot -e "CREATE USER ${WORDPRESS_DB_NAME} \
-		IDENTIFIED BY '${WORDPRESS_DB_PASSWORD}';"
+	# -e コマンドラインから直接クエリを実行して、結果を表示する
+	mysql -uroot -e "CREATE DATABASE '${MYSQL_DATABASE}';"
+
+	mysql -uroot -e "CREATE USER ${MYSQL_USER} \
+		IDENTIFIED BY '${MYSQL_PASSWORD}';"
+
 	mysql -uroot -e "GRANT ALL PRIVILEGES \
-		ON ${WORDPRESS_DB_NAME}.* \
-		TO '${WORDPRESS_DB_USER}'@'%' \
-		IDENTIFIED BY '${WORDPRESS_DB_PASSWORD}';"
+		ON ${MYSQL_DATABASE}.* \
+		TO '${MYSQL_USER}'@'%' \
+		IDENTIFIED BY '${MYSQL_PASSWORD}';"
+
 	mysql -uroot -e "FLUSH PRIVILEGES;"
 
-	if ! kill -s TERM "$pid" || ! wait "$pid"; then
-		echo >$2 'MariaDB init process failed.'
-		exit 1
-	fi
+	mysql_note "MariaDB setup completed."
 
-	echo "MariaDB setup completed."
 fi
 
-echo "Starting MariaDB server..."
-exec "$@"
+# mysqld --skip-networking --socket="/run/mysqld/mysqld.sock"
 
-# ${WORDPRESS_DB_USER}
-exec mysqld -u mysql --console
+# until mysqladmin ping --silent; do
+# 	mysql_note "Waiting for MariaDB to start ..."
+# 	sleep 5
+# done
+
+echo "Starting MariaDB server..."
+# exec "$@"
+
+mysqld --console
