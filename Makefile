@@ -17,6 +17,12 @@ help :
 	@echo " down	: Stop and remove Docker containers"
 	@echo " clean	: Clean up Docker volume and networks"
 
+# 名前解決のため/etc/hostsの書き換え
+add-host :
+	@echo "Adding ${DOMAIN_NAME} to /etc/hosts"
+	@sudo sh -c 'echo "127.0.0.1 ${DOMAIN_NAME}" >> /etc/hosts'
+	@echo "Done"
+
 # サービスのイメージをビルド
 build :
 	mkdir -p ${VOLUME_PATH}/mariadb
@@ -42,4 +48,4 @@ fclean : clean
 	rm -rf ${VOLUME_PATH}/mariadb
 	rm -rf ${VOLUME_PATH}/wordpress
 
-.PHONY: help build up down clean fclean
+.PHONY: help add-host build up down clean fclean
