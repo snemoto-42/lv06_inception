@@ -18,10 +18,19 @@ help :
 	@echo " clean	: Clean up Docker volume and networks"
 
 # 名前解決のため/etc/hostsの書き換え
-add-host :
-	@echo "Adding ${DOMAIN_NAME} to /etc/hosts"
-	@sudo sh -c 'echo "127.0.0.1 ${DOMAIN_NAME}" >> /etc/hosts'
+new-host :
+	@echo "changing from localhost to ${DOMAIN_NAME} on /etc/hosts"
+	@sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 ${DOMAIN_NAME}/' /etc/hosts
 	@echo "Done"
+
+old-host :
+	@echo "changing from ${DOMAIN_NAME} to localhost on /etc/hosts"
+	@sudo sed -i 's/127.0.0.1 ${DOMAIN_NAME}/127.0.0.1 localhost/' /etc/hosts
+	@echo "Done"
+
+cat-host :
+	@echo "cat /etc/hosts"
+	@cat /etc/hosts
 
 # サービスのイメージをビルド
 build :
@@ -48,4 +57,4 @@ fclean : clean
 	rm -rf ${VOLUME_PATH}/mariadb
 	rm -rf ${VOLUME_PATH}/wordpress
 
-.PHONY: help add-host build up down clean fclean
+.PHONY: help new-host old-host cat-host build up down clean fclean
