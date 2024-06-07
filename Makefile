@@ -32,6 +32,12 @@ cat-host :
 	@echo "cat /etc/hosts"
 	@cat /etc/hosts
 
+list :
+	@echo "docker containers"
+	docker ps -a
+	@echo "docker images"
+	docker images
+
 # サービスのイメージをビルド
 build :
 	mkdir -p ${VOLUME_PATH}/mariadb
@@ -51,10 +57,16 @@ clean : down
 	docker volume prune --force
 	docker network prune --force
 
-# ローカルのマウント先を削除
+# ローカルのマウント先と未使用のイメージを削除
 fclean : clean
 	docker image prune --force
 	rm -rf ${VOLUME_PATH}/mariadb
 	rm -rf ${VOLUME_PATH}/wordpress
 
-.PHONY: help new-host old-host cat-host build up down clean fclean
+# イメージも全て削除
+ifclean : fclean
+	docker rmi nginx
+	docker rmi mariadb
+	docker rmi wordpress
+
+.PHONY: help new-host old-host cat-host list build up down clean fclean ifclean

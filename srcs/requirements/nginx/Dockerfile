@@ -9,7 +9,7 @@ RUN apt-get update && \
 		openssl && \
 	rm -rf /var/lib/apt/lists/*
 
-COPY ./conf/my.conf /etc/nginx/conf
+COPY ./conf/default.conf /etc/nginx/nginx.conf
 
 RUN mkdir -p ${SSL_PATH}
 
@@ -23,9 +23,9 @@ RUN openssl req \
 	-out ${SSL_PATH}/nginx.crt
 
 # ランタイムデータの保存
-RUN mkdir -p /run/nginx
+# RUN mkdir -p /run/nginx
 
-WORKDIR /var/www/html
+# WORKDIR /var/www/html
 
 EXPOSE 443
 
