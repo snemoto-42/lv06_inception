@@ -1,5 +1,5 @@
 # デフォルトのターゲット
-.DEFAULT_GOAL := list
+.DEFAULT_GOAL := help
 
 # .envのパス
 ENV_FILE := ./srcs/.env
@@ -10,12 +10,71 @@ ENV_FILE := ./srcs/.env
 include $(ENV_FILE)
 export
 
-# help :
-# 	@echo "Available targets:"
-# 	@echo " build	: Build Docker containers"
-# 	@echo " up	: Start Docker containers"
-# 	@echo " down	: Stop and remove Docker containers"
-# 	@echo " clean	: Clean up Docker volume and networks"
+help :
+	@echo "Available targets:"
+	@echo " list		: ls images and containers"
+	@echo " build		: Build images"
+	@echo " up		: Start containers"
+	@echo " up-d		: Start containers by detach mode"
+	@echo " all		: Build images and Start containers"
+	@echo " stop		: Stop containers"
+	@echo " down		: Stop and remove containers"
+	@echo " clean		: Clean up volume and networks"
+	@echo " fclean		: Clean up volume and networks and local mount"
+	@echo " ifclean	: Clean up all docker materials"
+	@echo " new-host	: change ${DOMAIN_NAME} at /etc/hosts"
+	@echo " old-host	: change localhost at /etc/hosts"
+	@echo " cat-host	: check /etc/hosts"
+	@echo " ssl-check	: check the crt files"
+	@echo " ssl-curl	: curl test using ssl"
+
+# for docker
+list :
+	docker images
+	docker ps -a
+
+# イメージを作成
+build :
+	mkdir -p ${VOLUME_PATH}/mariadb
+	mkdir -p ${VOLUME_PATH}/wordpress
+	docker-compose -f srcs/docker-compose.yml build
+
+# イメージからコンテナを起動
+# entrypointの内容が出力される
+up :
+	docker-compose -f srcs/docker-compose.yml up
+
+# プロンプトを戻す場合は -d
+up-d :
+	docker-compose -f srcs/docker-compose.yml up -d
+
+all : build up-d
+
+# 起動コンテナを停止
+stop :
+	docker-compose -f srcs/docker-compose.yml stop
+
+# コンテナとネットワークを削除
+down : stop
+	docker-compose -f srcs/docker-compose.yml down
+
+# 使用されていないボリュームとネットワークを削除
+clean : down
+	docker volume prune --force
+	docker network prune --force
+
+# ローカルのマウント先とボリューム、未使用のイメージを削除
+fclean : clean
+	docker image prune --force
+	docker volume rm srcs_wordpress srcs_mariadb
+	rm -rf ${VOLUME_PATH}/mariadb
+	rm -rf ${VOLUME_PATH}/wordpress
+
+# イメージも全て削除
+ifclean : fclean
+	docker rmi nginx
+	docker rmi mariadb
+	docker rmi wordpress
 
 # 名前解決のため/etc/hostsの書き換え
 new-host :
@@ -43,44 +102,10 @@ ssl-curl :
 	curl -I https://localhost:443 --cacert nginx.crt
 	rm ./nginx.crt
 
-# for docker
-list :
-	docker images
-	docker ps -a
-
-# イメージを作成
-build :
-	mkdir -p ${VOLUME_PATH}/mariadb
-	mkdir -p ${VOLUME_PATH}/wordpress
-	docker-compose -f srcs/docker-compose.yml build
-
-# イメージからコンテナを起動
-up : build
-	docker-compose -f srcs/docker-compose.yml up
-
-# 起動コンテナを停止、コンテナとネットワークを削除、ボリュームは保持
-down :
-	docker-compose -f srcs/docker-compose.yml down
-
-# 使用されていないボリュームとネットワークを削除
-clean : down
-	docker volume prune --force
-	docker network prune --force
-
-# ローカルのマウント先とボリューム、未使用のイメージを削除
-fclean : clean
-	docker image prune --force
-	docker volume rm srcs_wordpress srcs_mariadb
-	rm -rf ${VOLUME_PATH}/mariadb
-	rm -rf ${VOLUME_PATH}/wordpress
-
-# イメージも全て削除
-ifclean : fclean
-	docker rmi nginx
-	docker rmi mariadb
-	docker rmi wordpress
-
-.PHONY: new-host old-host cat-host \
-		ssl-check ssl-curl \
-		list build up down \
-		clean fclean ifclean
+.PHONY: help \
+		list all \
+		build up up-d \
+		stop down \
+		clean fclean ifclean \
+		new-host old-host cat-host \
+		ssl-check ssl-curl
