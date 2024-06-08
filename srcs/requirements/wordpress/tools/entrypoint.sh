@@ -16,8 +16,8 @@ set -e
 # pwd
 # ls -al
 
-sed -i "s/listen = .*/listen = 0.0.0.0:9000/" /etc/php/*/fpm/pool.d/www.conf
-sed -i "s/^listen.allowed_clients/;listen.allowed_clients/" /etc/php/*/fpm/pool.d/www.conf
+sed -i "s/listen = .*/listen = 0.0.0.0:9000/" /etc/php/8.2/fpm/pool.d/www.conf
+sed -i "s/^listen.allowed_clients/;listen.allowed_clients/" /etc/php/8.2/fpm/pool.d/www.conf
 
 cd /var/www/html
 chown -R www-data:www-data /var/www/html

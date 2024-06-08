@@ -20,17 +20,17 @@ help :
 # 名前解決のため/etc/hostsの書き換え
 new-host :
 	@echo "changing from localhost to ${DOMAIN_NAME} on /etc/hosts"
-	@sudo sed -i 's/localhost/${DOMAIN_NAME}/' /etc/hosts
+	sudo sed -i 's/localhost/${DOMAIN_NAME}/' /etc/hosts
 	@echo "Done"
 
 old-host :
 	@echo "changing from ${DOMAIN_NAME} to localhost on /etc/hosts"
-	@sudo sed -i 's/${DOMAIN_NAME}/localhost/' /etc/hosts
+	sudo sed -i 's/${DOMAIN_NAME}/localhost/' /etc/hosts
 	@echo "Done"
 
 cat-host :
 	@echo "cat /etc/hosts"
-	@cat /etc/hosts
+	cat /etc/hosts
 
 list :
 	@echo "docker containers"
