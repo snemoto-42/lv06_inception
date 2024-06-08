@@ -15,10 +15,6 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 	&& chmod +x wp-cli.phar \
 	&& mv wp-cli.phar /usr/local/bin/wp
 
-# WORKDIR /var/www/html
-# RUN wp --allow-root core download
-# COPY ./tools/wp-config.php /var/www/html
-
 COPY ./conf/php-fpm.conf /etc/php/8.2/fpm/php-fpm.conf
 COPY ./conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 

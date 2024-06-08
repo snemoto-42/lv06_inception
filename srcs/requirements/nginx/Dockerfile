@@ -26,11 +26,6 @@ RUN openssl req \
 	-keyout ${SSL_PATH}/nginx.key \
 	-out ${SSL_PATH}/nginx.crt
 
-# ランタイムデータの保存
-# RUN mkdir -p /run/nginx
-
-# WORKDIR /var/www/html
-
 EXPOSE 443
 
 CMD [ "nginx", "-g", "daemon off;" ]

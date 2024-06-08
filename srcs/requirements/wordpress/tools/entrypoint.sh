@@ -1,24 +1,6 @@
 #!/bin/bash
 set -e
 
-# until mysqladmin ping -h"${WORDPRESS_HOST}" --silent; do
-# 	echo "Waiting for MariaDB to start ..."
-# 	sleep 5
-# done
-# echo "MariaDB is starting..."
-
-# for debug
-# echo "checking files at /etc/php/*/fpm/pool.d/"
-# ls -la /etc/php/*/fpm/pool.d/
-
-# # for debug
-# echo "checking files at ${HTML_PATH}"
-# pwd
-# ls -al
-
-# sed -i "s/listen = .*/listen = 0.0.0.0:9000/" /etc/php/8.2/fpm/pool.d/www.conf
-# sed -i "s/^listen.allowed_clients/;listen.allowed_clients/" /etc/php/8.2/fpm/pool.d/www.conf
-
 cd ${HTML_PATH}
 chown -R www-data:www-data ${HTML_PATH}
 chmod -R 755 ${HTML_PATH}
@@ -48,12 +30,9 @@ if ! $(wp --allow-root core is-installed); then
 		${WORDPRESS_SUBSCRIBER_EMAIL} \
 		--user_pass="${WORDPRESS_SUBSCRIBER_PASSWORD}" \
 		--role=subscriber
-		# --role=author
-	# wp --allow-root --path="${HTML_PATH}" option update comment_registration 1
 fi
 
 echo "finish setting up for Wordpress."
 
-# exec "$@"
 # exec php-fpm -v
 exec php-fpm8.2 --nodaemonize
