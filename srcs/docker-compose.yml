@@ -1,4 +1,6 @@
-version: '3'
+# version: '3'
+# expose:コンテナ間通信用のポート公開,ホストマシンには公開しない
+# ports:ホストマシンに公開するポートを指定,ホストマシンからアクセス可
 
 services:
   mariadb:
@@ -8,8 +10,8 @@ services:
       context: ./requirements/mariadb
       # args:
       #   MYSQL_USER: ${MYSQL_USER}
-    ports:
-      - 3306:3306
+    expose:
+      - "3306"
     volumes:
       - mariadb:/var/lib/mysql
     networks:
@@ -18,32 +20,13 @@ services:
     env_file:
       - .env
 
-  nginx:
-    image: nginx
-    container_name: nginx
-    build: 
-      context: ./requirements/nginx
-      args:
-        SSL_PATH: ${SSL_PATH}
-    ports:
-      - 443:443
-    volumes:
-      - wordpress:/var/www/html
-    depends_on:
-      - wordpress
-    networks:
-      - my_network
-    restart: always
-    env_file:
-      - .env
-  
   wordpress:
     image: wordpress
     container_name: wordpress
     build: 
       context: ./requirements/wordpress
-    ports:
-      - 9000:9000
+    expose:
+      - "9000"
     volumes:
       - wordpress:/var/www/html
     depends_on:
@@ -53,6 +36,30 @@ services:
     restart: always
     env_file:
       - .env
+  
+  nginx:
+    image: nginx
+    container_name: nginx
+    build: 
+      context: ./requirements/nginx
+      args:
+        SSL_PATH: ${SSL_PATH}
+        DOMAIN_NAME: ${DOMAIN_NAME}
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress:/var/www/html
+    depends_on:
+      - wordpress
+    networks:
+      - my_network
+    restart: always
+    env_file:
+      - .env
+
+networks:
+  my_network:
+    driver: bridge
   
 volumes:
   wordpress:
@@ -67,7 +74,3 @@ volumes:
       type: none
       o: bind
       device: ${VOLUME_PATH}/mariadb
-
-networks:
-  my_network:
-    driver: bridge

@@ -2,7 +2,9 @@ FROM debian:12.0
 
 RUN apt-get update && \
 	apt-get install -y \
-		default-mysql-client \
+		# default-mysql-client \
+		# ping \
+		# lsof \
 		curl \
 		php8.2-fpm \
 		php8.2-mysql && \
@@ -16,6 +18,9 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 # WORKDIR /var/www/html
 # RUN wp --allow-root core download
 # COPY ./tools/wp-config.php /var/www/html
+
+COPY ./conf/php-fpm.conf /etc/php/8.2/fpm/php-fpm.conf
+COPY ./conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 
 EXPOSE 9000
 

@@ -1,5 +1,5 @@
 # デフォルトのターゲット
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := list
 
 # .envのパス
 ENV_FILE := ./srcs/.env
@@ -10,12 +10,12 @@ ENV_FILE := ./srcs/.env
 include $(ENV_FILE)
 export
 
-help :
-	@echo "Available targets:"
-	@echo " build	: Build Docker containers"
-	@echo " up	: Start Docker containers"
-	@echo " down	: Stop and remove Docker containers"
-	@echo " clean	: Clean up Docker volume and networks"
+# help :
+# 	@echo "Available targets:"
+# 	@echo " build	: Build Docker containers"
+# 	@echo " up	: Start Docker containers"
+# 	@echo " down	: Stop and remove Docker containers"
+# 	@echo " clean	: Clean up Docker volume and networks"
 
 # 名前解決のため/etc/hostsの書き換え
 new-host :
@@ -32,19 +32,29 @@ cat-host :
 	@echo "cat /etc/hosts"
 	cat /etc/hosts
 
-list :
-	@echo "docker containers"
-	docker ps -a
-	@echo "docker images"
-	docker images
+# for ssl
+ssl-check :
+	docker cp nginx:/etc/nginx/ssl/nginx.crt ./nginx.crt
+	openssl x509 -in ./nginx.crt -text -noout
+	rm ./nginx.crt
+	
+ssl-curl :
+	docker cp nginx:/etc/nginx/ssl/nginx.crt ./nginx.crt
+	curl -I https://localhost:443 --cacert nginx.crt
+	rm ./nginx.crt
 
-# サービスのイメージをビルド
+# for docker
+list :
+	docker images
+	docker ps -a
+
+# イメージを作成
 build :
 	mkdir -p ${VOLUME_PATH}/mariadb
 	mkdir -p ${VOLUME_PATH}/wordpress
 	docker-compose -f srcs/docker-compose.yml build
 
-# イメージを作成、イメージからコンテナを起動
+# イメージからコンテナを起動
 up : build
 	docker-compose -f srcs/docker-compose.yml up
 
@@ -57,9 +67,10 @@ clean : down
 	docker volume prune --force
 	docker network prune --force
 
-# ローカルのマウント先と未使用のイメージを削除
+# ローカルのマウント先とボリューム、未使用のイメージを削除
 fclean : clean
 	docker image prune --force
+	docker volume rm srcs_wordpress srcs_mariadb
 	rm -rf ${VOLUME_PATH}/mariadb
 	rm -rf ${VOLUME_PATH}/wordpress
 
@@ -69,4 +80,7 @@ ifclean : fclean
 	docker rmi mariadb
 	docker rmi wordpress
 
-.PHONY: help new-host old-host cat-host list build up down clean fclean ifclean
+.PHONY: new-host old-host cat-host \
+		ssl-check ssl-curl \
+		list build up down \
+		clean fclean ifclean
