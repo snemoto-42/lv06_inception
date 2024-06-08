@@ -99,7 +99,7 @@ ssl-check :
 	
 ssl-curl :
 	docker cp nginx:/etc/nginx/ssl/nginx.crt ./nginx.crt
-	curl -I https://localhost:443 --cacert nginx.crt
+	curl -I https://${DOMAIN_NAME}:443 --cacert nginx.crt
 	rm ./nginx.crt
 
 .PHONY: help \
